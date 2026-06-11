@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InvestAI - Consultoria de Investimentos Inteligente</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0b0f19;
+            --bg-secondary: #111827;
+            --bg-tertiary: #1f2937;
+            --text-primary: #f9fafb;
+            --text-secondary: #9ca3af;
+            --accent-primary: #10b981; /* Esmeralda */
+            --accent-glow: rgba(16, 185, 129, 0.15);
+            --accent-hover: #059669;
+            --border-color: #374151;
+            --chat-user-bg: #2563eb;
+            --chat-agent-bg: #1f2937;
+            --font-main: 'Plus Jakarta Sans', sans-serif;
+            --font-title: 'Outfit', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            background: linear-gradient(135deg, var(--accent-primary), #3b82f6);
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: white;
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .logo-text h1 {
+            font-family: var(--font-title);
+            font-size: 1.25rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #ffffff, #9ca3af);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-text p {
+            font-size: 0.75rem;
+            color: var(--accent-primary);
+            font-weight: 500;
+            letter-spacing: 0.05em;
+        }
+
+        .header-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 0.4rem 0.8rem;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            color: var(--accent-primary);
+            font-weight: 600;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-primary);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        /* Main Workspace */
+        main {
+            flex: 1;
+            display: flex;
+            height: calc(100vh - 73px);
+            position: relative;
+        }
+
+        /* Sidebar info */
+        .sidebar {
+            width: 320px;
+            background-color: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            overflow-y: auto;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+        }
+
+        .sidebar-section h3 {
+            font-family: var(--font-title);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+        }
+
+        .sidebar-card {
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1rem;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: var(--text-secondary);
+        }
+
+        .sidebar-card strong {
+            color: var(--text-primary);
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .quick-topic {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            text-align: left;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .quick-topic:hover {
+            border-color: var(--accent-primary);
+            background-color: rgba(16, 185, 129, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .quick-topic-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        /* Chat Container */
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--bg-primary);
+            position: relative;
+        }
+
+        .messages-area {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            scroll-behavior: smooth;
+        }
+
+        .message {
+            display: flex;
+            flex-direction: column;
+            max-width: 80%;
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+
+        .message.agent {
+            align-self: flex-start;
+        }
+
+        .message.user {
+            align-self: flex-end;
+        }
+
+        .message-bubble {
+            padding: 1rem 1.25rem;
+            border-radius: 16px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .message.agent .message-bubble {
+            background-color: var(--chat-agent-bg);
+            border: 1px solid var(--border-color);
+            border-top-left-radius: 4px;
+            color: var(--text-primary);
+        }
+
+        .message.user .message-bubble {
+            background: linear-gradient(135deg, var(--chat-user-bg), #1d4ed8);
+            border-top-right-radius: 4px;
+            color: white;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.25);
+        }
+
+        .message-meta {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.35rem;
+            margin-left: 0.5rem;
+        }
+
+        .message.user .message-meta {
+            align-self: flex-end;
+            margin-right: 0.5rem;
+        }
+
+        /* Disclaimer Styling */
+        .disclaimer-box {
+            margin-top: 1rem;
+            padding: 0.75rem 1rem;
+            background-color: rgba(245, 158, 11, 0.08);
+            border-left: 3px solid #f59e0b;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: #f59e0b;
+            line-height: 1.4;
+        }
+
+        /* Asset Table */
+        .asset-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.85rem;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .asset-table th {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+            text-align: left;
+            padding: 0.75rem;
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .asset-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .asset-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .pos-variation {
+            color: #10b981;
+            font-weight: 600;
+        }
+
+        .neg-variation {
+            color: #ef4444;
+            font-weight: 600;
+        }
+
+        /* Interactive Quiz Styles */
+        .quiz-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-top: 0.75rem;
+        }
+
+        .quiz-option {
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+            text-align: left;
+        }
+
+        .quiz-option:hover {
+            border-color: var(--accent-primary);
+            background-color: rgba(16, 185, 129, 0.05);
+        }
+
+        /* Input Area */
+        .input-container {
+            padding: 1.5rem 2rem;
+            background-color: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .input-wrapper {
+            display: flex;
+            position: relative;
+            background-color: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .input-wrapper:focus-within {
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .input-wrapper input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            padding: 1rem 1.25rem;
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            font-size: 0.95rem;
+        }
+
+        .input-wrapper input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .send-btn {
+            background-color: var(--accent-primary);
+            color: white;
+            border: none;
+            padding: 0 1.5rem;
+            border-top-right-radius: 11px;
+            border-bottom-right-radius: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .send-btn:hover {
+            background-color: var(--accent-hover);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+            }
+        }
+
+        /* Typing indicator */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+        }
+
+        .typing-indicator span {
+            width: 6px;
+            height: 6px;
+            background-color: var(--text-secondary);
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1.0); }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-container">
+            <div class="logo-icon">I</div>
+            <div class="logo-text">
+                <h1>InvestAI</h1>
+                <p>Consultoria e Perfil de Investimentos</p>
+            </div>
+        </div>
+        <div class="header-status">
+            <div class="status-dot"></div>
+            <span>Consultor Especialista Online</span>
+        </div>
+    </header>
+
+    <main>
+        <div class="sidebar">
+            <div class="sidebar-section">
+                <h3>Como Funciona</h3>
+                <div class="sidebar-card">
+                    <strong>Análise Estatística</strong>
+                    Nossas respostas são baseadas em dados históricos do mercado e diretrizes de gerenciamento de risco, sem preferências subjetivas.
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>Tópicos Rápidos</h3>
+                <div class="quick-topic-list">
+                    <button class="quick-topic" onclick="sendQuickTopic('Quero saber sobre Ações')">
+                        <span>O que são Ações?</span>
+                        <span>&rarr;</span>
+                    </button>
+                    <button class="quick-topic" onclick="sendQuickTopic('Explique Renda Fixa')">
+                        <span>O que é Renda Fixa?</span>
+                        <span>&rarr;</span>
+                    </button>
+                    <button class="quick-topic" onclick="sendQuickTopic('Como funcionam os FIIs?')">
+                        <span>Fundos Imobiliários</span>
+                        <span>&rarr;</span>
+                    </button>
+                    <button class="quick-topic" onclick="sendQuickTopic('Descobrir meu perfil')">
+                        <span>Descobrir Perfil</span>
+                        <span>&rarr;</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-container">
+            <div class="messages-area" id="chatArea">
+                <!-- Welcome Message -->
+                <div class="message agent">
+                    <div class="message-bubble">
+                        Olá! Sou o seu consultor especialista em investimentos. Estou à disposição para tirar qualquer dúvida que você tenha sobre ativos financeiros (Ações, Renda Fixa, FIIs, ETFs, Cripto, Tesouro Direto, etc.) ou para te ajudar a identificar o seu perfil de investidor e recomendar a melhor categoria de alocação.
+                        <br><br>
+                        Como posso ajudar você hoje? Se quiser começar descobrindo o seu perfil, basta clicar em "Descobrir Perfil" no menu ao lado ou me dizer diretamente!
+                    </div>
+                    <div class="message-meta">InvestAI • Agora mesmo</div>
+                </div>
+            </div>
+
+            <div class="input-container">
+                <form id="chatForm" onsubmit="handleUserSubmit(event)">
+                    <div class="input-wrapper">
+                        <input type="text" id="userInput" placeholder="Escreva sua dúvida sobre investimentos aqui..." autocomplete="off">
+                        <button type="submit" class="send-btn">
+                            Enviar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const chatArea = document.getElementById('chatArea');
+        const userInput = document.getElementById('userInput');
+
+        // Dados simulados de ativos para as tabelas (conforme regra 3 do agente.md)
+        const assetsData = {
+            acoes: {
+                name: "Ações (Renda Variável)",
+                explanation: "Investimento em frações (ações) de empresas listadas na bolsa de valores. Ao comprar, você se torna sócio minoritário do negócio.",
+                profile: "Destinado a perfis <strong>Moderados</strong> e principalmente <strong>Arrojados</strong>, que toleram volatilidade em busca de retornos maiores no longo prazo.",
+                table: [
+                    { period: "1 mês", variation: "+4.2%" },
+                    { period: "6 meses", variation: "-2.1%" },
+                    { period: "1 ano", variation: "+14.8%" }
+                ]
+            },
+            rendafixa: {
+                name: "Renda Fixa",
+                explanation: "Títulos de dívida emitidos por governos ou instituições privadas onde as regras de rendimento (taxa pré ou pós-fixada) são definidas no início.",
+                profile: "Ideal para perfis <strong>Conservadores</strong> e <strong>Moderados</strong> que buscam segurança, previsibilidade e liquidez.",
+                table: [
+                    { period: "1 mês", variation: "+0.95%" },
+                    { period: "6 meses", variation: "+5.8%" },
+                    { period: "1 ano", variation: "+11.5%" }
+                ]
+            },
+            etfs: {
+                name: "ETFs (Exchange Traded Funds)",
+                explanation: "Fundos de índice negociados na bolsa que replicam a performance de uma carteira específica, como o Ibovespa ou o S&P 500.",
+                profile: "Indicado para perfis <strong>Moderados</strong> e <strong>Arrojados</strong> que desejam diversificação instantânea de forma simples e de baixo custo.",
+                table: [
+                    { period: "1 mês", variation: "+2.8%" },
+                    { period: "6 meses", variation: "+8.4%" },
+                    { period: "1 ano", variation: "+12.1%" }
+                ]
+            },
+            cripto: {
+                name: "Criptomoedas",
+                explanation: "Ativos digitais descentralizados baseados em blockchain, altamente voláteis e sem garantia de governos ou instituições tradicionais.",
+                profile: "Destinado exclusivamente a investidores altamente <strong>Arrojados / Agressivos</strong> que compreendem o altíssimo risco e alocam uma pequena parte do capital.",
+                table: [
+                    { period: "1 mês", variation: "+12.4%" },
+                    { period: "6 meses", variation: "+45.2%" },
+                    { period: "1 ano", variation: "+94.6%" }
+                ]
+            },
+            fiis: {
+                name: "Fundos Imobiliários (FIIs)",
+                explanation: "Comunhão de recursos destinados à aplicação em empreendimentos imobiliários de tijolo (shoppings, galpões) ou papel (títulos de crédito imobiliário). Distribui rendimentos mensais.",
+                profile: "Apropriado para investidores de perfil <strong>Moderado</strong> e <strong>Arrojados</strong> que buscam renda passiva periódica vinda do mercado imobiliário.",
+                table: [
+                    { period: "1 mês", variation: "+1.5%" },
+                    { period: "6 meses", variation: "+6.2%" },
+                    { period: "1 ano", variation: "+8.9%" }
+                ]
+            },
+            tesouro: {
+                name: "Tesouro Direto",
+                explanation: "Títulos da dívida pública federal emitidos pelo Tesouro Nacional. É considerado o investimento mais seguro de um país.",
+                profile: "Destinado a todos os perfis de investimento, sendo a base ideal para o investidor <strong>Conservador</strong> construir sua reserva de emergência.",
+                table: [
+                    { period: "1 mês", variation: "+0.90%" },
+                    { period: "6 meses", variation: "+5.5%" },
+                    { period: "1 ano", variation: "+10.9%" }
+                ]
+            }
+        };
+
+        // Estado do questionário de perfil
+        let quizStep = 0;
+        let quizAnswers = {
+            prazo: '',
+            perda: '',
+            conhecimento: ''
+        };
+
+        function addMessage(text, isUser = false, customHtml = "") {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'agent'}`;
+
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            messageDiv.innerHTML = `
+                <div class="message-bubble">
+                    ${text}
+                    ${customHtml}
+                </div>
+                <div class="message-meta">${isUser ? 'Você' : 'InvestAI'} • ${timeStr}</div>
+            `;
+
+            chatArea.appendChild(messageDiv);
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+
+        function addTypingIndicator() {
+            const indicatorDiv = document.createElement('div');
+            indicatorDiv.className = 'message agent temp-indicator';
+            indicatorDiv.innerHTML = `
+                <div class="message-bubble">
+                    <div class="typing-indicator">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            `;
+            chatArea.appendChild(indicatorDiv);
+            chatArea.scrollTop = chatArea.scrollHeight;
+            return indicatorDiv;
+        }
+
+        function sendQuickTopic(topicText) {
+            handleBotResponse(topicText);
+        }
+
+        function handleUserSubmit(e) {
+            e.preventDefault();
+            const text = userInput.value.trim();
+            if (!text) return;
+
+            addMessage(text, true);
+            userInput.value = '';
+
+            const indicator = addTypingIndicator();
+
+            setTimeout(() => {
+                indicator.remove();
+                processUserQuery(text);
+            }, 1000);
+        }
+
+        function handleBotResponse(text) {
+            addMessage(text, true);
+            const indicator = addTypingIndicator();
+            setTimeout(() => {
+                indicator.remove();
+                processUserQuery(text);
+            }, 1000);
+        }
+
+        function getDisclaimer() {
+            return `
+                <div class="disclaimer-box">
+                    <strong>⚠️ AVISO LEGAL:</strong> Esta resposta constitui uma análise estritamente educativa e informativa baseada em dados estatísticos gerais do mercado financeiro e no alinhamento de perfis conceituais de investimento. Nenhuma informação aqui apresentada deve ser considerada como recomendação direta ou oferta de compra e venda de ativos específicos.
+                </div>
+            `;
+        }
+
+        function renderAssetTable(asset) {
+            let rows = '';
+            asset.table.forEach(item => {
+                const isPositive = !item.variation.startsWith('-');
+                const varClass = isPositive ? 'pos-variation' : 'neg-variation';
+                rows += `
+                    <tr>
+                        <td>${item.period}</td>
+                        <td class="${varClass}">${item.variation}</td>
+                    </tr>
+                `;
+            });
+
+            return `
+                <table class="asset-table">
+                    <thead>
+                        <tr>
+                            <th>Período</th>
+                            <th>Variação Estimada / Histórica</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${rows}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function startQuiz() {
+            quizStep = 1;
+            const text = "Excelente! Vamos iniciar o questionário para identificar o seu perfil de investimento e prazo ideal. <br><br><strong>Pergunta 1:</strong> Por quanto tempo você pretende manter seus recursos investidos?";
+            const html = `
+                <div class="quiz-container">
+                    <button class="quiz-option" onclick="selectQuizOption('Curto Prazo (menos de 1 ano)')">Curto Prazo (menos de 1 ano)</button>
+                    <button class="quiz-option" onclick="selectQuizOption('Médio Prazo (1 a 5 anos)')">Médio Prazo (1 a 5 anos)</button>
+                    <button class="quiz-option" onclick="selectQuizOption('Longo Prazo (mais de 5 anos)')">Longo Prazo (mais de 5 anos)</button>
+                </div>
+            `;
+            addMessage(text, false, html);
+        }
+
+        function selectQuizOption(optionText) {
+            addMessage(optionText, true);
+            const indicator = addTypingIndicator();
+
+            setTimeout(() => {
+                indicator.remove();
+                
+                if (quizStep === 1) {
+                    quizAnswers.prazo = optionText;
+                    quizStep = 2;
+                    const text = "<strong>Pergunta 2:</strong> Como você reagiria se visse o valor do seu investimento oscilar negativamente em 10% no curto prazo?";
+                    const html = `
+                        <div class="quiz-container">
+                            <button class="quiz-option" onclick="selectQuizOption('Ficaria muito preocupado e resgataria imediatamente')">Ficaria muito preocupado e resgataria imediatamente</button>
+                            <button class="quiz-option" onclick="selectQuizOption('Acharia desconfortável, mas manteria para ver se recupera')">Acharia desconfortável, mas manteria para ver se recupera</button>
+                            <button class="quiz-option" onclick="selectQuizOption('Enxergaria como oportunidade e compraria mais ações/ativos')">Enxergaria como oportunidade e compraria mais ações/ativos</button>
+                        </div>
+                    `;
+                    addMessage(text, false, html);
+                } else if (quizStep === 2) {
+                    quizAnswers.perda = optionText;
+                    quizStep = 3;
+                    const text = "<strong>Pergunta 3:</strong> Qual o seu nível de familiaridade com produtos do mercado financeiro?";
+                    const html = `
+                        <div class="quiz-container">
+                            <button class="quiz-option" onclick="selectQuizOption('Baixo: Conheço apenas a poupança e CDBs básicos')">Baixo: Conheço apenas a poupança e CDBs básicos</button>
+                            <button class="quiz-option" onclick="selectQuizOption('Médio: Entendo fundos de investimento e renda fixa avançada')">Médio: Entendo fundos de investimento e renda fixa avançada</button>
+                            <button class="quiz-option" onclick="selectQuizOption('Alto: Entendo mercado de ações, derivativos e criptoativos')">Alto: Entendo mercado de ações, derivativos e criptoativos</button>
+                        </div>
+                    `;
+                    addMessage(text, false, html);
+                } else if (quizStep === 3) {
+                    quizAnswers.conhecimento = optionText;
+                    evaluateProfile();
+                }
+            }, 1000);
+        }
+
+        function evaluateProfile() {
+            let profile = '';
+            let recommendations = [];
+            
+            // Lógica simples para decidir o perfil
+            if (quizAnswers.perda.includes('resgataria') || quizAnswers.conhecimento.includes('Baixo')) {
+                profile = 'Conservador';
+                recommendations = ['Renda Fixa', 'Tesouro Direto'];
+            } else if (quizAnswers.perda.includes('oportunidade') && quizAnswers.conhecimento.includes('Alto')) {
+                profile = 'Arrojado';
+                recommendations = ['Ações', 'ETFs', 'Criptomoedas', 'Fundos Imobiliários'];
+            } else {
+                profile = 'Moderado';
+                recommendations = ['Renda Fixa', 'Fundos Imobiliários', 'ETFs', 'Tesouro Direto'];
+            }
+
+            const text = `
+                Análise concluída com sucesso!<br><br>
+                Com base nas suas respostas, identificamos que o seu perfil de investidor é majoritariamente <strong>${profile}</strong> com foco para prazo de <strong>${quizAnswers.prazo}</strong>.<br><br>
+                <strong>Categorias Recomendadas:</strong><br>
+                ${recommendations.map(rec => `• ${rec}`).join('<br>')}<br><br>
+                Gostaria de tirar alguma dúvida específica sobre alguma dessas classes de investimentos recomendadas para você?
+            `;
+            
+            addMessage(text, false, getDisclaimer());
+            
+            // Reset quiz
+            quizStep = 0;
+        }
+
+        function processUserQuery(query) {
+            const cleanQuery = query.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+            // Reset do quiz se solicitado fora de contexto
+            if (cleanQuery.includes('perfil') || cleanQuery.includes('questionario') || cleanQuery.includes('comecar')) {
+                startQuiz();
+                return;
+            }
+
+            let foundAsset = null;
+            let keyMatch = '';
+
+            if (cleanQuery.includes('acao') || cleanQuery.includes('acoes') || cleanQuery.includes('bolsa')) {
+                foundAsset = assetsData.acoes;
+                keyMatch = 'Ações';
+            } else if (cleanQuery.includes('renda fixa') || cleanQuery.includes('pos-fixado') || cleanQuery.includes('cdb')) {
+                foundAsset = assetsData.rendafixa;
+                keyMatch = 'Renda Fixa';
+            } else if (cleanQuery.includes('etf') || cleanQuery.includes('exchange traded') || cleanQuery.includes('fundo de indice')) {
+                foundAsset = assetsData.etfs;
+                keyMatch = 'ETFs';
+            } else if (cleanQuery.includes('cripto') || cleanQuery.includes('bitcoin') || cleanQuery.includes('ethereum')) {
+                foundAsset = assetsData.cripto;
+                keyMatch = 'Criptomoedas';
+            } else if (cleanQuery.includes('imobiliario') || cleanQuery.includes('fii') || cleanQuery.includes('fiis')) {
+                foundAsset = assetsData.fiis;
+                keyMatch = 'Fundos Imobiliários (FIIs)';
+            } else if (cleanQuery.includes('tesouro') || cleanQuery.includes('tesouro direto') || cleanQuery.includes('publico')) {
+                foundAsset = assetsData.tesouro;
+                keyMatch = 'Tesouro Direto';
+            }
+
+            if (foundAsset) {
+                const responseText = `
+                    <h3>Entendendo sobre ${foundAsset.name}</h3><br>
+                    <strong>O que é o investimento?</strong><br>
+                    ${foundAsset.explanation}<br><br>
+                    <strong>Qual o perfil de investidor destinado?</strong><br>
+                    ${foundAsset.profile}<br><br>
+                    <strong>Performance Histórica / Variação Periódica:</strong>
+                `;
+                
+                const tableHtml = renderAssetTable(foundAsset);
+                
+                addMessage(responseText, false, tableHtml + getDisclaimer());
+            } else {
+                // Resposta padrão caso não mapeie um ativo específico
+                const fallbackText = `
+                    Como seu consultor, posso te ajudar a entender diversas categorias de investimentos do mercado.<br><br>
+                    Por favor, selecione um dos ativos listados abaixo ou digite sua pergunta para que eu possa prover a explicação estatística, o perfil e o histórico de rentabilidade:<br>
+                    • Ações<br>
+                    • Renda Fixa<br>
+                    • ETFs<br>
+                    • Fundos Imobiliários (FIIs)<br>
+                    • Tesouro Direto<br>
+                    • Criptomoedas
+                `;
+                addMessage(fallbackText);
+            }
+        }
+    </script>
+</body>
+</html>
