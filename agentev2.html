@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InvestAI v2 - Consultoria de Investimentos Avançada</title>
+    <meta name="description" content="InvestAI - Consultoria sênior de investimentos e finanças de forma séria e orientada a dados.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Link para a folha de estilos premium -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <div class="logo-container">
+            <div class="logo-icon">IAI</div>
+            <div class="logo-text">
+                <h1>InvestAI v2</h1>
+                <p>Consultoria Sênior de Investimentos</p>
+            </div>
+        </div>
+        <div class="header-status">
+            <span class="status-dot"></span>
+            <span>Mesa de Operações Online</span>
+        </div>
+    </header>
+
+    <main>
+        <!-- Sidebar lateral para atalhos rápidos e status de perfil do usuário -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <h3>Perfil do Investidor</h3>
+                <div class="sidebar-card" id="user-profile-card">
+                    <p id="sidebar-profile-text"><strong>Perfil Identificado:</strong> <span style="color: var(--text-muted);">Não mapeado</span></p>
+                    <p id="sidebar-recommendations-text" style="margin-top: 8px;"><strong>Alocações Sugeridas:</strong><br><span style="color: var(--text-muted);">Execute o questionário para ver as classes de ativos adequadas.</span></p>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <h3>Atalhos Rápidos</h3>
+                <div class="quick-topic-list">
+                    <button class="quick-topic" data-topic="Quero fazer o questionário para descobrir meu perfil">
+                        <span>Descobrir Perfil</span>
+                        <span class="quick-topic-arrow">➔</span>
+                    </button>
+                    <button class="quick-topic" data-topic="Quais os riscos e características da Renda Fixa?">
+                        <span>Renda Fixa</span>
+                        <span class="quick-topic-arrow">➔</span>
+                    </button>
+                    <button class="quick-topic" data-topic="Como funcionam os Fundos Imobiliários (FIIs)?">
+                        <span>Fundos Imobiliários</span>
+                        <span class="quick-topic-arrow">➔</span>
+                    </button>
+                    <button class="quick-topic" data-topic="Gostaria de entender sobre ETFs e índices">
+                        <span>ETFs / Índices</span>
+                        <span class="quick-topic-arrow">➔</span>
+                    </button>
+                    <button class="quick-topic" data-topic="Fale sobre Criptomoedas e volatilidade">
+                        <span>Criptomoedas</span>
+                        <span class="quick-topic-arrow">➔</span>
+                    </button>
+                    <button class="quick-topic" data-topic="Quero entender sobre Commodities">
+                        <span>Commodities</span>
+                        <span class="quick-topic-arrow">➔</span>
+                    </button>
+                    <button class="quick-topic" data-topic="Quais as opções no Mercado de Câmbio?">
+                        <span>Câmbio / Moedas</span>
+                        <span class="quick-topic-arrow">➔</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="sidebar-card" style="font-size: 0.78rem; border-color: var(--border-glow); background: rgba(16, 185, 129, 0.02);">
+                <strong>💡 Dica do Consultor:</strong> Digite o ticker de ativos específicos como <em>PETR4, VALE3, AAPL34, IVVB11, BTC ou ETH</em> no chat para ver análises e notícias consolidadas da corretora.
+            </div>
+        </aside>
+
+        <!-- Container principal do Chat -->
+        <section class="chat-container">
+            <div class="messages-area" id="chatArea" role="log" aria-label="Histórico do Chat">
+                <!-- As mensagens serão inseridas dinamicamente aqui -->
+            </div>
+
+            <div class="input-container">
+                <form id="chatForm" aria-label="Formulário de mensagem">
+                    <div class="input-wrapper">
+                        <input type="text" id="userInput" placeholder="Faça uma consulta ou digite um ativo (ex: PETR4)..." autocomplete="off" aria-label="Digite sua mensagem">
+                        <button type="submit" class="send-btn" id="sendBtn">
+                            Enviar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <!-- Script Principal -->
+    <script src="js/app.js"></script>
+</body>
+</html>
